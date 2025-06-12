@@ -21,7 +21,7 @@ if st.session_state.page == "home":
     st.markdown("""
         <style>
         .stApp {
-            background: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         .nav-container {
             position: fixed;
@@ -29,11 +29,11 @@ if st.session_state.page == "home":
             left: 0;
             right: 0;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             padding: 1rem 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
         .nav-content {
             max-width: 1200px;
@@ -43,31 +43,31 @@ if st.session_state.page == "home":
             align-items: center;
         }
         .nav-logo {
-            color: #222222;
+            color: white;
             font-size: 1.8rem;
             font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.6);
         }
         .main-content {
-            background: #f9f9f9;
-            backdrop-filter: blur(0);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 3rem 2rem;
             margin: 8rem auto 2rem;
             max-width: 600px;
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
             text-align: center;
         }
         .title {
-            color: #111;
+            color: white;
             font-size: 3rem;
             font-weight: bold;
             margin-bottom: 1rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.6);
         }
         .subtitle {
-            color: #444;
+            color: rgba(255, 255, 255, 0.95);
             font-size: 1.2rem;
             margin-bottom: 3rem;
         }
@@ -120,8 +120,6 @@ if st.session_state.page == "home":
     st.stop()
 
 # ---------------- PITCH DETECTION PAGE ----------------
-# [REMAINDER OF CODE UNCHANGED]
-
 elif st.session_state.page == "app":
     st.set_page_config(page_title="Voice Pitch Detection", layout="wide")
 
@@ -206,10 +204,8 @@ elif st.session_state.page == "app":
 
             st.subheader("Original Audio Waveform")
             fig_raw, ax_raw = plt.subplots(figsize=(12, 3))
-            fig_raw.patch.set_facecolor('#1e1e1e')
-            ax_raw.set_facecolor('#2e2e2e')
-            ax_raw.set_title('Original Audio (Before Filtering)', color='white')
             librosa.display.waveshow(y, sr=sr, ax=ax_raw)
+            ax_raw.set_title('Original Audio (Before Filtering)')
             ax_raw.grid(True, alpha=0.3)
             st.pyplot(fig_raw)
             plt.close(fig_raw)
@@ -235,23 +231,20 @@ elif st.session_state.page == "app":
 
                 st.subheader("Pitch Analysis Results")
                 fig, ax = plt.subplots(nrows=2, sharex=True, figsize=(12, 8))
-                fig.patch.set_facecolor('#1e1e1e')
                 for a in ax:
-                    a.set_facecolor('#2e2e2e')
+                    a.set_facecolor((0.9, 0.95, 1))
                     a.grid(True, color='gray', linestyle='--', alpha=0.3)
 
                 librosa.display.waveshow(y_filtered, sr=sr, ax=ax[0], color='dodgerblue')
-                ax[0].set_title('Filtered Audio Waveform', color='white')
+                ax[0].set_title('Filtered Audio Waveform')
                 ax[1].plot(times, pitches, label='Estimated Pitch (Hz)', color='mediumvioletred', linewidth=2)
-                ax[1].set_title('Pitch Over Time', color='white')
-                ax[1].set_xlabel('Time (s)', color='white')
-                ax[1].set_ylabel('Pitch (Hz)', color='white')
+                ax[1].set_title('Pitch Over Time')
+                ax[1].set_xlabel('Time (s)')
+                ax[1].set_ylabel('Pitch (Hz)')
                 ax[1].legend()
                 ax[1].set_ylim(0, max(1000, np.max(pitches) * 1.1) if np.any(pitches > 0) else 1000)
 
-                for label in (ax[1].get_xticklabels() + ax[1].get_yticklabels()):
-                    label.set_color('white')
-
+                fig.patch.set_facecolor((0.95, 0.95, 1))
                 st.pyplot(fig)
                 plt.close(fig)
 
