@@ -134,7 +134,6 @@ elif st.session_state.page == "app":
         lowcut = st.slider("Lowcut Frequency (Hz)", min_value=20, max_value=500, value=50, step=10)
         highcut = st.slider("Highcut Frequency (Hz)", min_value=480, max_value=2000, value=1000, step=10)
 
-    st.markdown("<br>", unsafe_allow_html=True)
     col7, col8, col9 = st.columns([1, 2, 1])
     with col8:
         if st.button("Back to Home"):
@@ -232,53 +231,59 @@ elif st.session_state.page == "app":
 
                 st.subheader("Pitch Analysis Results")
                 fig, ax = plt.subplots(nrows=2, sharex=True, figsize=(12, 8))
-                librosa.display.waveshow(y_filtered, sr=sr, ax=ax[0])
-                ax[0].set_title('Filtered Audio Waveform')
-                ax[0].grid(True, alpha=0.3)
-                ax[1].plot(times, pitches, label='Estimated Pitch (Hz)', color='red', linewidth=2)
-                ax[1].set_title('Pitch Over Time')
-                ax[1].set_xlabel('Time (s)')
-                ax[1].set_ylabel('Pitch (Hz)')
+                gradient = np.linspace(0, 1, 256).reshape(1, -1)
+                extent = [0, duration, -1, 1]
+
+                for a in ax:
+                    a.imshow(gradient, extent=extent, aspect='auto', cmap='coolwarm', alpha=0.2, origin='lower')
+                    a.set_facecolor((0.05, 0.05, 0.1))
+                    a.grid(True, color='white', linestyle='--', alpha=0.2)
+
+                librosa.display.waveshow(y_filtered, sr=sr, ax=ax[0], color='lime')
+                ax[0].set_title('Filtered Audio Waveform', color='white')
+                ax[0].tick_params(colors='white')
+
+                ax[1].plot(times, pitches, label='Estimated Pitch (Hz)', color='yellow', linewidth=2)
+                ax[1].set_title('Pitch Over Time', color='white')
+                ax[1].set_xlabel('Time (s)', color='white')
+                ax[1].set_ylabel('Pitch (Hz)', color='white')
                 ax[1].legend()
-                ax[1].grid(True, alpha=0.3)
                 ax[1].set_ylim(0, max(1000, np.max(pitches) * 1.1) if np.any(pitches > 0) else 1000)
+                ax[1].tick_params(colors='white')
+
+                fig.patch.set_facecolor((0.05, 0.05, 0.1))
                 st.pyplot(fig)
                 plt.close(fig)
 
                 if np.any(pitches > 0):
                     valid_pitches = pitches[pitches > 0]
                     st.subheader("Pitch Statistics")
+                    avg_pitch = np.mean(valid_pitches)
+                    std_pitch = np.std(valid_pitches)
                     col1, col2, col3, col4 = st.columns(4)
                     with col1:
-                        st.metric("Average Pitch", f"{np.mean(valid_pitches):.2f} Hz")
+                        st.metric("Average Pitch", f"{avg_pitch:.2f} Hz")
                     with col2:
                         st.metric("Min Pitch", f"{np.min(valid_pitches):.2f} Hz")
                     with col3:
                         st.metric("Max Pitch", f"{np.max(valid_pitches):.2f} Hz")
                     with col4:
-                        st.metric("Std Deviation", f"{np.std(valid_pitches):.2f} Hz")
+                        st.metric("Std Deviation", f"{std_pitch:.2f} Hz")
 
-                    # Pitch Analysis Summary
-                    st.subheader("Pitch Interpretation")
-                    analysis = ""
-                    avg_pitch = np.mean(valid_pitches)
-                    std_pitch = np.std(valid_pitches)
-
-                    if avg_pitch < 160:
-                        analysis += "🔹 Your average pitch is relatively **low**, which is typical for male voices or deeper vocal tones.\n\n"
-                    elif 160 <= avg_pitch <= 250:
-                        analysis += "🔹 Your average pitch falls in the **mid-range**, which is typical for many adult voices (especially female or higher-pitched male voices).\n\n"
+                    st.subheader("Pitch Analysis Summary")
+                    if avg_pitch < 150:
+                        st.info("The average pitch is relatively low. This may correspond to a lower-pitched voice.")
+                    elif avg_pitch < 300:
+                        st.info("The average pitch is in the mid-range. This is common for conversational speech.")
                     else:
-                        analysis += "🔹 Your average pitch is relatively **high**, which may indicate a higher-pitched voice, such as those in children or soprano-range voices.\n\n"
+                        st.info("The average pitch is quite high. This might indicate a high-pitched voice or singing.")
 
                     if std_pitch < 20:
-                        analysis += "🔸 Your pitch is **very stable**, showing consistent vocal tone.\n\n"
-                    elif 20 <= std_pitch < 50:
-                        analysis += "🔸 Your pitch shows **moderate variation**, which is common in natural speech and expressive talking.\n\n"
+                        st.info("The pitch is very stable over time.")
+                    elif std_pitch < 80:
+                        st.info("The pitch shows moderate variation, suggesting expressive or dynamic voice usage.")
                     else:
-                        analysis += "🔸 Your pitch is **highly variable**, which might suggest emotional expression, emphasis, or even background noise affecting detection.\n\n"
-
-                    st.markdown(analysis)
+                        st.info("The pitch has high variation, possibly indicating singing, emotional speech, or noise.")
 
                 else:
                     st.error("No valid pitch detected. Try uploading a clearer audio sample or adjusting the filter settings.")
