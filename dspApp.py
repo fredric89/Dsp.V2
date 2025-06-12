@@ -273,13 +273,13 @@ elif st.session_state.page == "app":
                 else:
                     st.error("No valid pitch detected. Try clearer audio or filter tweaks.")
 
-            os.unlink(tmp)
+            os.unlink(tmp_path)
             if os.path.exists(filtered_path):
                 os.unlink(filtered_path)
 
         except Exception as e:
             st.error(f"Error processing file: {e}")
-            if os.path.exists(tmp):
-                os.unlink(tmp)
+            if os.path.exists(tmp_path):
+                os.unlink(tmp_path)
     else:
         st.info("Upload an audio file to start analysis.")
