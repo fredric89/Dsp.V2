@@ -119,8 +119,9 @@ if st.session_state.page == "home":
 
     st.stop()
 
-
 # ---------------- PITCH DETECTION PAGE ----------------
+# [REMAINDER OF CODE UNCHANGED]
+
 elif st.session_state.page == "app":
     st.set_page_config(page_title="Voice Pitch Detection", layout="wide")
 
