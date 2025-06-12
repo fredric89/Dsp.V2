@@ -21,7 +21,7 @@ if st.session_state.page == "home":
     st.markdown("""
         <style>
         .stApp {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: white;
         }
         .nav-container {
             position: fixed;
@@ -29,11 +29,11 @@ if st.session_state.page == "home":
             left: 0;
             right: 0;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             padding: 1rem 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
         .nav-content {
             max-width: 1200px;
@@ -43,31 +43,31 @@ if st.session_state.page == "home":
             align-items: center;
         }
         .nav-logo {
-            color: white;
+            color: #222222;
             font-size: 1.8rem;
             font-weight: bold;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.6);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
         .main-content {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
+            background: #f9f9f9;
+            backdrop-filter: blur(0);
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.1);
             padding: 3rem 2rem;
             margin: 8rem auto 2rem;
             max-width: 600px;
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
         .title {
-            color: white;
+            color: #111;
             font-size: 3rem;
             font-weight: bold;
             margin-bottom: 1rem;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.6);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
         .subtitle {
-            color: rgba(255, 255, 255, 0.95);
+            color: #444;
             font-size: 1.2rem;
             margin-bottom: 3rem;
         }
@@ -118,6 +118,7 @@ if st.session_state.page == "home":
     """, unsafe_allow_html=True)
 
     st.stop()
+
 
 # ---------------- PITCH DETECTION PAGE ----------------
 elif st.session_state.page == "app":
