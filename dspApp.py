@@ -245,41 +245,51 @@ elif st.session_state.page == "app":
                 st.pyplot(fig)
                 plt.close(fig)
 
-                if np.any(pitches>0):
-                    vp = pitches[pitches>0]
-                    avg_p = vp.mean(); std_p = vp.std()
+                if np.any(pitches > 0):
+                    valid_pitches = pitches[pitches > 0]
                     st.subheader("Pitch Statistics")
-                    c1, c2, c3, c4 = st.columns(4)
-                    c1.metric("Average Pitch", f"{avg_p:.2f} Hz")
-                    c2.metric("Min Pitch", f"{vp.min():.2f} Hz")
-                    c3.metric("Max Pitch", f"{vp.max():.2f} Hz")
-                    c4.metric("Std Deviation", f"{std_p:.2f} Hz")
+                    col1, col2, col3, col4 = st.columns(4)
+                    with col1:
+                        st.metric("Average Pitch", f"{np.mean(valid_pitches):.2f} Hz")
+                    with col2:
+                        st.metric("Min Pitch", f"{np.min(valid_pitches):.2f} Hz")
+                    with col3:
+                        st.metric("Max Pitch", f"{np.max(valid_pitches):.2f} Hz")
+                    with col4:
+                        st.metric("Std Deviation", f"{np.std(valid_pitches):.2f} Hz")
 
-                    # Interpretation
-                    st.subheader("Pitch Analysis Summary")
-                    if avg_p < 150:
-                        st.info("Low average pitch — typical of deeper voices.")
-                    elif avg_p < 300:
-                        st.info("Mid‑range pitch — typical of conversational voices.")
+                    # Pitch Analysis Summary
+                    st.subheader("Pitch Interpretation")
+                    analysis = ""
+                    avg_pitch = np.mean(valid_pitches)
+                    std_pitch = np.std(valid_pitches)
+
+                    if avg_pitch < 160:
+                        analysis += "🔹 Your average pitch is relatively **low**, which is typical for male voices or deeper vocal tones.\n\n"
+                    elif 160 <= avg_pitch <= 250:
+                        analysis += "🔹 Your average pitch falls in the **mid-range**, which is typical for many adult voices (especially female or higher-pitched male voices).\n\n"
                     else:
-                        st.info("High average pitch — common in higher-pitched singing/voices.")
-                    if std_p < 20:
-                        st.info("Pitch is very stable.")
-                    elif std_p < 80:
-                        st.info("Moderate pitch variation.")
+                        analysis += "🔹 Your average pitch is relatively **high**, which may indicate a higher-pitched voice, such as those in children or soprano-range voices.\n\n"
+
+                    if std_pitch < 20:
+                        analysis += "🔸 Your pitch is **very stable**, showing consistent vocal tone.\n\n"
+                    elif 20 <= std_pitch < 50:
+                        analysis += "🔸 Your pitch shows **moderate variation**, which is common in natural speech and expressive talking.\n\n"
                     else:
-                        st.info("High pitch variability detected.")
+                        analysis += "🔸 Your pitch is **highly variable**, which might suggest emotional expression, emphasis, or even background noise affecting detection.\n\n"
+
+                    st.markdown(analysis)
 
                 else:
-                    st.error("No valid pitch detected. Try clearer audio or filter tweaks.")
+                    st.error("No valid pitch detected. Try uploading a clearer audio sample or adjusting the filter settings.")
 
             os.unlink(tmp_path)
             if os.path.exists(filtered_path):
                 os.unlink(filtered_path)
 
         except Exception as e:
-            st.error(f"Error processing file: {e}")
+            st.error(f"Error processing audio file: {str(e)}")
             if os.path.exists(tmp_path):
                 os.unlink(tmp_path)
     else:
-        st.info("Upload an audio file to start analysis.")
+        st.info("Please upload an audio file to start pitch detection.")
