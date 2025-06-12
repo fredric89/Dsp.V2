@@ -9,12 +9,15 @@ from scipy.signal import butter, lfilter
 import soundfile as sf
 from scipy.interpolate import interp1d
 
+# Page state control
 if "page" not in st.session_state:
     st.session_state.page = "home"
 
+# ---------------- LANDING PAGE ----------------
 if st.session_state.page == "home":
     st.set_page_config(page_title="Voice Pitch Detector", layout="centered")
 
+    # Styling
     st.markdown("""
         <style>
         .stApp {
@@ -74,6 +77,7 @@ if st.session_state.page == "home":
         </style>
     """, unsafe_allow_html=True)
 
+    # Navbar
     st.markdown("""
         <div class="nav-container">
             <div class="nav-content">
@@ -82,6 +86,7 @@ if st.session_state.page == "home":
         </div>
     """, unsafe_allow_html=True)
 
+    # Main Content
     st.markdown("""
         <div class="main-content">
             <div class="title">Voice Pitch Detector</div>
@@ -114,6 +119,7 @@ if st.session_state.page == "home":
 
     st.stop()
 
+# ---------------- PITCH DETECTION PAGE ----------------
 elif st.session_state.page == "app":
     st.set_page_config(page_title="Voice Pitch Detection", layout="wide")
 
@@ -198,8 +204,10 @@ elif st.session_state.page == "app":
 
             st.subheader("Original Audio Waveform")
             fig_raw, ax_raw = plt.subplots(figsize=(12, 3))
+            fig_raw.patch.set_facecolor('#1e1e1e')
+            ax_raw.set_facecolor('#2e2e2e')
+            ax_raw.set_title('Original Audio (Before Filtering)', color='white')
             librosa.display.waveshow(y, sr=sr, ax=ax_raw)
-            ax_raw.set_title('Original Audio (Before Filtering)')
             ax_raw.grid(True, alpha=0.3)
             st.pyplot(fig_raw)
             plt.close(fig_raw)
@@ -225,26 +233,23 @@ elif st.session_state.page == "app":
 
                 st.subheader("Pitch Analysis Results")
                 fig, ax = plt.subplots(nrows=2, sharex=True, figsize=(12, 8))
-
-                # Gradient background
-                gradient = np.linspace(0.8, 1.0, 256).reshape(256, 1)
-                colors = np.ones((256, 1, 3)) * np.array([0.93, 0.85, 0.95])
-                colors *= gradient[:, None]
-
+                fig.patch.set_facecolor('#1e1e1e')
                 for a in ax:
-                    a.imshow(colors, aspect='auto', extent=[0, 1, 0, 1], transform=a.transAxes, zorder=0)
+                    a.set_facecolor('#2e2e2e')
                     a.grid(True, color='gray', linestyle='--', alpha=0.3)
 
-                librosa.display.waveshow(y_filtered, sr=sr, ax=ax[0], color='dodgerblue', zorder=1)
-                ax[0].set_title('Filtered Audio Waveform')
-                ax[1].plot(times, pitches, label='Estimated Pitch (Hz)', color='mediumvioletred', linewidth=2, zorder=1)
-                ax[1].set_title('Pitch Over Time')
-                ax[1].set_xlabel('Time (s)')
-                ax[1].set_ylabel('Pitch (Hz)')
+                librosa.display.waveshow(y_filtered, sr=sr, ax=ax[0], color='dodgerblue')
+                ax[0].set_title('Filtered Audio Waveform', color='white')
+                ax[1].plot(times, pitches, label='Estimated Pitch (Hz)', color='mediumvioletred', linewidth=2)
+                ax[1].set_title('Pitch Over Time', color='white')
+                ax[1].set_xlabel('Time (s)', color='white')
+                ax[1].set_ylabel('Pitch (Hz)', color='white')
                 ax[1].legend()
                 ax[1].set_ylim(0, max(1000, np.max(pitches) * 1.1) if np.any(pitches > 0) else 1000)
 
-                fig.patch.set_facecolor((0.95, 0.95, 1))
+                for label in (ax[1].get_xticklabels() + ax[1].get_yticklabels()):
+                    label.set_color('white')
+
                 st.pyplot(fig)
                 plt.close(fig)
 
