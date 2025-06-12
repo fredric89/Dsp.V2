@@ -231,27 +231,20 @@ elif st.session_state.page == "app":
 
                 st.subheader("Pitch Analysis Results")
                 fig, ax = plt.subplots(nrows=2, sharex=True, figsize=(12, 8))
-                gradient = np.linspace(0, 1, 256).reshape(1, -1)
-                extent = [0, duration, -1, 1]
-
                 for a in ax:
-                    a.imshow(gradient, extent=extent, aspect='auto', cmap='coolwarm', alpha=0.2, origin='lower')
-                    a.set_facecolor((0.05, 0.05, 0.1))
-                    a.grid(True, color='white', linestyle='--', alpha=0.2)
+                    a.set_facecolor((0.9, 0.95, 1))
+                    a.grid(True, color='gray', linestyle='--', alpha=0.3)
 
-                librosa.display.waveshow(y_filtered, sr=sr, ax=ax[0], color='lime')
-                ax[0].set_title('Filtered Audio Waveform', color='white')
-                ax[0].tick_params(colors='white')
-
-                ax[1].plot(times, pitches, label='Estimated Pitch (Hz)', color='yellow', linewidth=2)
-                ax[1].set_title('Pitch Over Time', color='white')
-                ax[1].set_xlabel('Time (s)', color='white')
-                ax[1].set_ylabel('Pitch (Hz)', color='white')
+                librosa.display.waveshow(y_filtered, sr=sr, ax=ax[0], color='dodgerblue')
+                ax[0].set_title('Filtered Audio Waveform')
+                ax[1].plot(times, pitches, label='Estimated Pitch (Hz)', color='mediumvioletred', linewidth=2)
+                ax[1].set_title('Pitch Over Time')
+                ax[1].set_xlabel('Time (s)')
+                ax[1].set_ylabel('Pitch (Hz)')
                 ax[1].legend()
                 ax[1].set_ylim(0, max(1000, np.max(pitches) * 1.1) if np.any(pitches > 0) else 1000)
-                ax[1].tick_params(colors='white')
 
-                fig.patch.set_facecolor((0.05, 0.05, 0.1))
+                fig.patch.set_facecolor((0.95, 0.95, 1))
                 st.pyplot(fig)
                 plt.close(fig)
 
