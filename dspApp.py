@@ -123,7 +123,6 @@ if st.session_state.page == "home":
 elif st.session_state.page == "app":
     st.set_page_config(page_title="Voice Pitch Detection", layout="wide")
 
-    # Centered Upload Section
     st.markdown("<h2 style='text-align: center; color: white;'>Upload Audio File</h2>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -142,7 +141,6 @@ elif st.session_state.page == "app":
             st.session_state.page = "home"
             st.rerun()
 
-    # Bandpass filter and pitch detection functions
     def butter_bandpass(lowcut, highcut, fs, order=4):
         nyq = 0.5 * fs
         low = lowcut / nyq
@@ -261,21 +259,21 @@ elif st.session_state.page == "app":
                         st.metric("Std Deviation", f"{np.std(valid_pitches):.2f} Hz")
 
                     # Pitch Analysis Summary
-                   st.subheader("Pitch Interpretation")
+                    st.subheader("Pitch Interpretation")
                     analysis = ""
+                    avg_pitch = np.mean(valid_pitches)
+                    std_pitch = np.std(valid_pitches)
 
-                    # Analyze average pitch
-                    if np.mean(valid_pitches) < 160:
+                    if avg_pitch < 160:
                         analysis += "🔹 Your average pitch is relatively **low**, which is typical for male voices or deeper vocal tones.\n\n"
-                    elif 160 <= np.mean(valid_pitches) <= 250:
+                    elif 160 <= avg_pitch <= 250:
                         analysis += "🔹 Your average pitch falls in the **mid-range**, which is typical for many adult voices (especially female or higher-pitched male voices).\n\n"
                     else:
                         analysis += "🔹 Your average pitch is relatively **high**, which may indicate a higher-pitched voice, such as those in children or soprano-range voices.\n\n"
 
-                    # Analyze pitch variability
-                    if np.std(valid_pitches) < 20:
+                    if std_pitch < 20:
                         analysis += "🔸 Your pitch is **very stable**, showing consistent vocal tone.\n\n"
-                    elif 20 <= np.std(valid_pitches) < 50:
+                    elif 20 <= std_pitch < 50:
                         analysis += "🔸 Your pitch shows **moderate variation**, which is common in natural speech and expressive talking.\n\n"
                     else:
                         analysis += "🔸 Your pitch is **highly variable**, which might suggest emotional expression, emphasis, or even background noise affecting detection.\n\n"
