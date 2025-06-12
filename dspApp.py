@@ -259,6 +259,29 @@ elif st.session_state.page == "app":
                         st.metric("Max Pitch", f"{np.max(valid_pitches):.2f} Hz")
                     with col4:
                         st.metric("Std Deviation", f"{np.std(valid_pitches):.2f} Hz")
+
+                    # Pitch Analysis Summary
+                   st.subheader("Pitch Interpretation")
+                    analysis = ""
+
+                    # Analyze average pitch
+                    if np.mean(valid_pitches) < 160:
+                        analysis += "🔹 Your average pitch is relatively **low**, which is typical for male voices or deeper vocal tones.\n\n"
+                    elif 160 <= np.mean(valid_pitches) <= 250:
+                        analysis += "🔹 Your average pitch falls in the **mid-range**, which is typical for many adult voices (especially female or higher-pitched male voices).\n\n"
+                    else:
+                        analysis += "🔹 Your average pitch is relatively **high**, which may indicate a higher-pitched voice, such as those in children or soprano-range voices.\n\n"
+
+                    # Analyze pitch variability
+                    if np.std(valid_pitches) < 20:
+                        analysis += "🔸 Your pitch is **very stable**, showing consistent vocal tone.\n\n"
+                    elif 20 <= np.std(valid_pitches) < 50:
+                        analysis += "🔸 Your pitch shows **moderate variation**, which is common in natural speech and expressive talking.\n\n"
+                    else:
+                        analysis += "🔸 Your pitch is **highly variable**, which might suggest emotional expression, emphasis, or even background noise affecting detection.\n\n"
+
+                    st.markdown(analysis)
+
                 else:
                     st.error("No valid pitch detected. Try uploading a clearer audio sample or adjusting the filter settings.")
 
