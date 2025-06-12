@@ -123,17 +123,26 @@ if st.session_state.page == "home":
 elif st.session_state.page == "app":
     st.set_page_config(page_title="Voice Pitch Detection", layout="wide")
 
-    st.sidebar.header("Upload Audio File")
-    audio_file = st.sidebar.file_uploader("Upload a voice or tone file (WAV/MP3)", type=["wav", "mp3"])
+    # Centered Upload Section
+    st.markdown("<h2 style='text-align: center; color: white;'>Upload Audio File</h2>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        audio_file = st.file_uploader("Choose a WAV or MP3 file", type=["wav", "mp3"])
 
-    st.sidebar.header("Bandpass Filter Settings")
-    lowcut = st.sidebar.slider("Lowcut Frequency (Hz)", min_value=20, max_value=500, value=50, step=10)
-    highcut = st.sidebar.slider("Highcut Frequency (Hz)", min_value=480, max_value=2000, value=1000, step=10)
+    st.markdown("<h2 style='text-align: center; color: white;'>Bandpass Filter Settings</h2>", unsafe_allow_html=True)
+    col4, col5, col6 = st.columns([1, 2, 1])
+    with col5:
+        lowcut = st.slider("Lowcut Frequency (Hz)", min_value=20, max_value=500, value=50, step=10)
+        highcut = st.slider("Highcut Frequency (Hz)", min_value=480, max_value=2000, value=1000, step=10)
 
-    if st.sidebar.button("Back to Home"):
-        st.session_state.page = "home"
-        st.rerun()
+    st.markdown("<br>", unsafe_allow_html=True)
+    col7, col8, col9 = st.columns([1, 2, 1])
+    with col8:
+        if st.button("Back to Home"):
+            st.session_state.page = "home"
+            st.rerun()
 
+    # Bandpass filter and pitch detection functions
     def butter_bandpass(lowcut, highcut, fs, order=4):
         nyq = 0.5 * fs
         low = lowcut / nyq
